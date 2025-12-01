@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Buscar Disponibilidad - El Mirador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background:
+                linear-gradient(rgba(20, 40, 20, 0.85), rgba(20, 40, 20, 0.90)),
+                url('/img/bg-campestre.jpg') center/cover fixed no-repeat;
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            min-height: 100vh;
+        }
+
+        h2 {
+            color: #f1f8e9;
+            font-weight: 700;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+
+        .card-campestre {
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.45);
+            padding: 2rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2f4f2f;
+        }
+
+        .form-control {
+            height: 48px;
+            border-radius: 12px;
+        }
+
+        .btn-buscar {
+            height: 48px;
+            border-radius: 50px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #3f7a3a, #7fbf58);
+            border: none;
+        }
+
+        .btn-buscar:hover {
+            filter: brightness(1.08);
+        }
+
+        .alert {
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-5">
+        <h2 class="mb-4 text-center">Encuentra tu espacio ideal</h2>
+
+        <div class="card card-campestre mx-auto" style="max-width: 750px;">
+            <form th:action="@{/reservas/resultados}" method="get">
+
+                <div class="row g-4">
+                    <div class="col-md-5">
+                        <label class="form-label">Fecha de Llegada</label>
+                        <input type="datetime-local" name="fechaInicio" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label class="form-label">Fecha de Salida</label>
+                        <input type="datetime-local" name="fechaFin" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-buscar w-100">
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger mt-4" th:text="${error}"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const ahora = new Date();
+            ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset()); 
+            const formatoFecha = ahora.toISOString().slice(0, 16);
+
+            const inputInicio = document.querySelector('input[name="fechaInicio"]');
+            const inputFin = document.querySelector('input[name="fechaFin"]');
+
+            if (inputInicio) inputInicio.min = formatoFecha;
+            if (inputFin) inputFin.min = formatoFecha;
+
+            if (inputInicio && inputFin) {
+                inputInicio.addEventListener('change', function () {
+                    if (this.value) {
+                        inputFin.min = this.value;
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

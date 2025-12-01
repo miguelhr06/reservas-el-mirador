@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Confirmar Reserva - El Mirador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background:
+                linear-gradient(rgba(20, 40, 20, 0.85), rgba(20, 40, 20, 0.88)),
+                url('/img/bg-campestre.jpg') center/cover fixed no-repeat;
+            font-family: "Segoe UI", system-ui;
+            min-height: 100vh;
+        }
+
+        .card-campestre {
+            border-radius: 22px;
+            border: none;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 0 12px 38px rgba(0,0,0,0.45);
+        }
+
+        .header-campestre {
+            background: linear-gradient(135deg, #3f7a3a, #75b85b);
+            color: white;
+            border-radius: 22px 22px 0 0;
+        }
+
+        h4 {
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .badge-tipo {
+            background-color: #d9fbe0;
+            color: #14592d;
+            font-weight: 600;
+            padding: 0.45rem 0.8rem;
+            border-radius: 30px;
+        }
+
+        .precio-box {
+            text-align: right;
+        }
+
+        .precio-total {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #2e7d32;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            height: 48px;
+        }
+
+        .alert-info {
+            border-radius: 14px;
+            background: #e3f6e5;
+            border: none;
+            color: #1b5e20;
+            font-weight: 500;
+        }
+
+        .btn-confirmar {
+            border-radius: 50px;
+            font-weight: 600;
+            padding-block: 0.8rem;
+            background: linear-gradient(135deg, #3f7a3a, #7fbf58);
+            border: none;
+        }
+
+        .btn-cancelar {
+            border-radius: 50px;
+            font-weight: 500;
+            padding-block: 0.8rem;
+        }
+
+        .label-bold {
+            font-weight: 600;
+            color: #2f4f2f;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+
+            <div class="col-md-8">
+                <div class="card card-campestre shadow-lg">
+
+                    <!-- HEADER -->
+                    <div class="header-campestre p-4">
+                        <h4 class="mb-0">
+                            <i class="bi bi-journal-check me-2"></i>
+                            Resumen de tu Reserva
+                        </h4>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="card-body p-4">
+
+                        <!-- RECURSO + PRECIO -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5 class="mb-1 label-bold">Recurso</h5>
+                                <p class="lead mb-1" th:text="${recurso.nombre}"></p>
+                                <span class="badge-tipo" th:text="${recurso.tipo.nombre}">Tipo</span>
+                            </div>
+
+                            <div class="col-md-6 precio-box">
+                                <h5 class="label-bold">Precio Total</h5>
+                                <div class="precio-total">
+                                    S/ <span th:text="${total}"></span>
+                                </div>
+                                <small class="text-muted">
+                                    Por <span th:text="${dias}"></span> noches
+                                </small>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- FORMULARIO -->
+                        <form th:action="@{/reservas/crear}" method="post">
+
+                            <input type="hidden" name="idRecurso" th:value="${recurso.idRecurso}">
+                            <input type="hidden" name="fechaInicio" th:value="${fechaInicio}">
+                            <input type="hidden" name="fechaFin" th:value="${fechaFin}">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="label-bold">Fecha Entrada:</label>
+                                    <input type="text" class="form-control" th:value="${fechaInicio}" readonly>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="label-bold">Fecha Salida:</label>
+                                    <input type="text" class="form-control" th:value="${fechaFin}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="label-bold">Cantidad de Personas (Máx:
+                                    <span th:text="${recurso.capacidad}"></span>)
+                                </label>
+                                <input type="number"
+                                       name="cantidadPersonas"
+                                       class="form-control"
+                                       min="1"
+                                       th:max="${recurso.capacidad}"
+                                       required>
+                            </div>
+
+                            <div class="alert alert-info mt-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Al confirmar, tu reserva quedará como
+                                <strong>PENDIENTE DE PAGO</strong>.
+                                Tendrás 24 horas para realizar el abono.
+                            </div>
+
+                            <div class="d-grid gap-3 mt-4">
+                                <button type="submit" class="btn btn-success btn-confirmar btn-lg">
+                                    Confirmar Reserva
+                                </button>
+
+                                <a href="/reservas/buscar" class="btn btn-outline-danger btn-cancelar">
+                                    Cancelar
+                                </a>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

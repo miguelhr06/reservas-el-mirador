@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulario Recurso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons para íconos bonitos -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            min-height: 100vh;
+            /* Fondo campestre (cambia la ruta de la imagen según tu proyecto) */
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url('/img/bg-campestre.jpg') center/cover fixed no-repeat;
+        }
+
+        .navbar-campestre {
+            background: linear-gradient(90deg, #355e3b, #6f8f4f);
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+        }
+
+        .card-campestre {
+            border-radius: 18px;
+            overflow: hidden;
+            border: none;
+        }
+
+        .card-header-campestre {
+            background: linear-gradient(135deg, #4b7f52, #a3c05b);
+        }
+
+        .badge-etiqueta {
+            background-color: #e9f5e6;
+            color: #355e3b;
+            font-size: 0.75rem;
+        }
+
+        .form-control,
+        .form-select,
+        .form-control:focus,
+        .form-select:focus {
+            border-radius: 12px;
+            box-shadow: none;
+        }
+
+        .btn-campestre {
+            background: linear-gradient(135deg, #4b7f52, #88b04b);
+            border: none;
+            border-radius: 999px;
+        }
+
+        .btn-campestre:hover {
+            filter: brightness(1.05);
+        }
+
+        .btn-outline-campestre {
+            border-radius: 999px;
+            border-color: #6f8f4f;
+            color: #3f5f38;
+        }
+
+        .btn-outline-campestre:hover {
+            background-color: #6f8f4f;
+            color: #fff;
+        }
+
+        .info-lateral {
+            color: #f8f9fa;
+        }
+
+        .info-lateral h3 {
+            font-weight: 700;
+        }
+
+        .pill-tag {
+            background-color: rgba(255,255,255,0.15);
+            border-radius: 999px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 767.98px) {
+            .info-lateral {
+                margin-bottom: 1.5rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-campestre shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <!-- Logo (opcional, cambia la ruta) -->
+                
+                <span class="fw-semibold">El mirador</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCampestre" aria-controls="navbarCampestre" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarCampestre">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/recursos">
+                            <i class="bi bi-grid"></i> Recursos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <i class="bi bi-tree"></i> Panel Administrador
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <div class="container py-5">
+        <div class="row justify-content-center align-items-center">
+            
+            <!-- LADO IZQUIERDO: INFO DECORATIVA -->
+            <div class="col-lg-5 mb-4 info-lateral">
+                <div class="mb-3">
+                    <span class="pill-tag me-2"><i class="bi bi-tree-fill"></i> Zona campestre</span>
+                    <span class="pill-tag"><i class="bi bi-people-fill"></i> Eventos familiares</span>
+                </div>
+                <h3>Gestión de Recursos del Restaurante</h3>
+                <p class="mt-3">
+                    Registra y administra los ambientes, bungalows, áreas de parrilla y otros recursos 
+                    del restaurante campestre. Controla su disponibilidad, capacidad y precios base 
+                    para garantizar una mejor experiencia a tus clientes.
+                </p>
+                <ul class="list-unstyled small mt-3">
+                    <li class="mb-1"><i class="bi bi-check-circle-fill me-2"></i> Control de capacidad por ambiente</li>
+                    <li class="mb-1"><i class="bi bi-check-circle-fill me-2"></i> Estados claros: disponible, mantenimiento o fuera de servicio</li>
+                    <li class="mb-1"><i class="bi bi-check-circle-fill me-2"></i> Descripciones detalladas para tu equipo de reservas</li>
+                </ul>
+            </div>
+
+            <!-- LADO DERECHO: FORMULARIO -->
+            <div class="col-lg-7 col-md-10 col-xl-6">
+                <div class="card card-campestre shadow-lg">
+                    <div class="card-header card-header-campestre text-white d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="d-block text-uppercase fw-light">Gestión de Recurso</small>
+                            <h4 class="mb-0" th:text="${recurso.idRecurso == null ? 'Nuevo Recurso' : 'Editar Recurso'}">Recurso</h4>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge badge-etiqueta">
+                                <i class="bi bi-gear-fill me-1"></i> Admin
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/admin/recursos/guardar}" th:object="${recurso}" method="post">
+                            <input type="hidden" th:field="*{idRecurso}">
+
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-tag-fill me-1 text-success"></i>
+                                    Nombre del Recurso
+                                </label>
+                                <input type="text" th:field="*{nombre}" class="form-control" placeholder="Ej: Bungalow Familiar, Área de Parrilla 1" required>
+                            </div>
+
+                            <!-- Tipo -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-list-ul me-1 text-success"></i>
+                                    Tipo
+                                </label>
+                                <select th:field="*{tipo}" class="form-select" required>
+                                    <option value="" disabled selected>Seleccione un tipo de recurso</option>
+                                    <option th:each="tipo : ${tipos}" th:value="${tipo.idTipo}" th:text="${tipo.nombre}"></option>
+                                </select>
+                            </div>
+
+                            <!-- Precio y Capacidad -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-cash-coin me-1 text-success"></i>
+                                        Precio Base (S/)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">S/</span>
+                                        <input type="number" step="0.01" th:field="*{precioBase}" class="form-control" placeholder="0.00" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-people-fill me-1 text-success"></i>
+                                        Capacidad (Pers.)
+                                    </label>
+                                    <input type="number" th:field="*{capacidad}" class="form-control" placeholder="Ej: 8, 12, 20" required>
+                                </div>
+                            </div>
+
+                            <!-- Estado -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-traffic-light me-1 text-success"></i>
+                                    Estado
+                                </label>
+                                <select th:field="*{estado}" class="form-select">
+                                    <option value="DISPONIBLE">DISPONIBLE</option>
+                                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                                    <option value="FUERA_DE_SERVICIO">FUERA DE SERVICIO</option>
+                                </select>
+                                <small class="text-muted d-block mt-1">
+                                    Define si el recurso está listo para recibir reservas o requiere intervención.
+                                </small>
+                            </div>
+                            
+                            <!-- Descripción -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-card-text me-1 text-success"></i>
+                                    Descripción
+                                </label>
+                                <textarea th:field="*{descripcion}" class="form-control" rows="3" placeholder="Ej: Área con vista al río, incluye parrilla, mesas rústicas y zona de juegos para niños."></textarea>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-grid gap-2 d-sm-flex justify-content-sm-end mt-4">
+                                <a href="/admin/recursos" class="btn btn-outline-campestre px-4">
+                                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-campestre px-4 text-white">
+                                    <i class="bi bi-save2-fill me-1"></i> Guardar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-muted small text-center">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Asegúrate de registrar correctamente cada ambiente para evitar sobre-reservas.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

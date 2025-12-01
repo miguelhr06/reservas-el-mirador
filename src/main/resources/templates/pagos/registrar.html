@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registrar Pago</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm text-center h-100">
+                <div class="card-header bg-dark text-white">
+                    <h5>Métodos de Pago</h5>
+                </div>
+                <div class="card-body">
+                    <p>Escanea el código QR o transfiere al número:</p>
+                    <h3 class="text-primary fw-bold">987-654-321</h3>
+                    <p class="text-muted">A nombre de: El Mirador S.A.C.</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <div class="bg-light border p-3" style="height: 150px; display:flex; align-items:center; justify-content:center;">
+                                <span class="fw-bold text-secondary">QR YAPE</span>
+                            </div>
+                            <small class="d-block mt-2 fw-bold text-primary">Yape</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light border p-3" style="height: 150px; display:flex; align-items:center; justify-content:center;">
+                                <span class="fw-bold text-secondary">QR PLIN</span>
+                            </div>
+                            <small class="d-block mt-2 fw-bold text-info">Plin</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4>Registrar Comprobante</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        Estás pagando la reserva: <strong th:text="${reserva.codigoReserva}">RES-001</strong>
+                    </div>
+
+                    <form th:action="@{/pagos/guardar}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="idReserva" th:value="${reserva.idReserva}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Monto a Pagar (S/)</label>
+                            <input type="number" name="monto" class="form-control" th:value="${reserva.precioTotal}" step="0.01" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Método de Pago</label>
+                            <select name="metodoPago" class="form-select" required>
+                                <option th:each="metodo : ${metodos}" 
+                                        th:value="${metodo}" 
+                                        th:text="${metodo}">YAPE</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Código de Operación / Referencia</label>
+                            <input type="text" name="codigoOperacion" class="form-control" placeholder="Ej: 1234567" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Captura de Pantalla (Voucher)</label>
+                            <input type="file" name="comprobante" class="form-control" accept="image/*">
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">Enviar Pago</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

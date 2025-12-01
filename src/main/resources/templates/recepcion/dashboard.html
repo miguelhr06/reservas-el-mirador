@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestión - Recepción</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: 
+                linear-gradient(rgba(20, 40, 20, 0.85), rgba(20, 40, 20, 0.90)),
+                url('/img/bg-campestre.jpg') center/cover fixed no-repeat;
+            font-family: "Segoe UI", system-ui;
+        }
+
+        /* Navbar campestre */
+        .navbar-campestre {
+            background: linear-gradient(90deg, #355e3b, #6f8f4f);
+            padding: 0.9rem 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.35rem;
+        }
+
+        .btn-config {
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .titulo-seccion {
+            color: #eaf4e2;
+            font-weight: 600;
+        }
+
+        /* Tarjetas estadísticas */
+        .card-stats {
+            border-radius: 18px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+        }
+
+        .card-header-light {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .card-dark {
+            background: linear-gradient(135deg, #1e3a1b, #325b32);
+            color: white;
+        }
+
+        .card-primary {
+            background: linear-gradient(135deg, #244966, #3e6d93);
+            color: white;
+        }
+
+        /* Tabla */
+        .card-table {
+            border-radius: 18px;
+            overflow: hidden;
+            border: none;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+        }
+
+        .table th {
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge {
+            border-radius: 999px;
+            padding: 0.45rem 0.7rem;
+            font-weight: 600;
+        }
+
+        .btn-gestionar {
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark navbar-campestre mb-4">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        <a class="navbar-brand text-white">
+            <i class="bi bi-shop-window me-2"></i> Panel de Recepción
+        </a>
+
+        <div class="d-flex align-items-center gap-2">
+            <a href="/admin/recursos" class="btn btn-warning btn-config">
+                <i class="bi bi-gear-fill"></i> Recursos
+            </a>
+
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button class="btn btn-outline-light btn-sm px-3">Salir</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid px-4">
+
+    <h3 class="titulo-seccion mb-4">
+        <i class="bi bi-calendar-check me-2"></i> Control de Reservas
+    </h3>
+
+    <!-- TARJETAS -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card card-stats card-dark shadow-sm">
+                <div class="card-header border-0">Ingresos Totales</div>
+                <div class="card-body">
+                    <h2 class="fw-bold">S/ <span th:text="${totalIngresos}">0.00</span></h2>
+                    <p class="mb-0 opacity-75">Acumulado histórico (confirmados)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-stats card-primary shadow-sm">
+                <div class="card-header border-0">Total Reservas</div>
+                <div class="card-body">
+                    <h2 class="fw-bold" th:text="${cantidadReservas}">0</h2>
+                    <p class="mb-0 opacity-75">Registradas en el sistema</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-stats shadow-sm">
+                <div class="card-header card-header-light">Estado de Reservas</div>
+                <div class="card-body">
+                    <canvas id="graficoEstados" style="max-height: 170px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="card card-table shadow mb-5">
+        <div class="card-body p-0">
+
+            <table class="table table-hover table-striped mb-0 align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th># Reserva</th>
+                        <th>Cliente</th>
+                        <th>Fechas</th>
+                        <th>Estado</th>
+                        <th>Pago</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="reserva : ${reservas}">
+                        <td class="fw-bold" th:text="${reserva.codigoReserva}">RES-001</td>
+
+                        <td class="text-start ps-4">
+                            <span th:text="${reserva.usuario.nombre} + ' ' + ${reserva.usuario.apellido}">Juan Perez</span><br>
+                            <small class="text-muted" th:text="${reserva.usuario.email}">email@test.com</small>
+                        </td>
+
+                        <td>
+                            <small>
+                                Entrada: <span th:text="${#temporals.format(reserva.fechaInicio, 'dd/MM HH:mm')}"></span>
+                            </small>
+                        </td>
+
+                        <td>
+                            <span th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}" class="badge bg-warning text-dark">Pendiente</span>
+                            <span th:if="${reserva.estado.name() == 'CONFIRMADA'}" class="badge bg-success">Confirmada</span>
+                            <span th:if="${reserva.estado.name() == 'CANCELADA'}" class="badge bg-danger">Cancelada</span>
+                        </td>
+
+                        <td>
+                            <div th:if="${!reserva.pagos.isEmpty()}">
+                                <span th:if="${reserva.pagos.get(reserva.pagos.size()-1).estado.name() == 'PENDIENTE'}" 
+                                      class="badge bg-info text-dark">
+                                    <i class="bi bi-exclamation-circle"></i> Nuevo Pago
+                                </span>
+                            </div>
+
+                            <div th:if="${reserva.pagos.isEmpty()}">
+                                <small class="text-muted">Sin intentos</small>
+                            </div>
+                        </td>
+
+                        <td>
+                            <a th:href="@{/recepcion/reservas/{id}(id=${reserva.idReserva})}" 
+                               class="btn btn-primary btn-sm btn-gestionar px-3">
+                                <i class="bi bi-eye"></i> Gestionar
+                            </a>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    var stats = /*[[${statsEstado}]]*/ {};
+
+    if (stats) {
+        var etiquetas = Object.keys(stats);
+        var valores = Object.values(stats);
+
+        var ctx = document.getElementById('graficoEstados').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: etiquetas,
+                datasets: [{
+                    data: valores,
+                    backgroundColor: ['#ffc107', '#198754', '#dc3545', '#6c757d'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
